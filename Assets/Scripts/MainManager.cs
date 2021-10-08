@@ -11,13 +11,14 @@ public class MainManager : MonoBehaviour
     public Rigidbody Ball;
 
     public Text ScoreText;
+    public Text scoreText1; //Players Data On Top Screen
     public GameObject GameOverText;
     
     private bool m_Started = false;
     private int m_Points;
     
     private bool m_GameOver = false;
-
+    private TrabalhaArquivo classeArquivo;
     
     // Start is called before the first frame update
     void Start()
@@ -36,6 +37,10 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
+        //Calls Stored PLayer's Name
+        classeArquivo = GameObject.Find("MainManager").GetComponent<TrabalhaArquivo>();
+        classeArquivo.LeArquivo();
+        scoreText1.text = "Best Score : " + StorePlayerData.Instance.storedPlayerName + " : " + StorePlayerData.Instance.highestScorePlayer;
     }
 
     private void Update()
@@ -52,6 +57,7 @@ public class MainManager : MonoBehaviour
                 Ball.transform.SetParent(null);
                 Ball.AddForce(forceDir * 2.0f, ForceMode.VelocityChange);
             }
+            
         }
         else if (m_GameOver)
         {
@@ -59,13 +65,16 @@ public class MainManager : MonoBehaviour
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }
-        }
+        }        
     }
 
     void AddPoint(int point)
     {
         m_Points += point;
         ScoreText.text = $"Score : {m_Points}";
+        //store highest score        
+        classeArquivo.EscreveArquivo(m_Points);
+        scoreText1.text = StorePlayerData.Instance.scoreText;
     }
 
     public void GameOver()
